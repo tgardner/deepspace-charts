@@ -1,0 +1,22 @@
+apiVersion: v1
+entries:
+  deepspace:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2024-05-22T04:34:37.728304917Z"
+    dependencies:
+    - name: deepspace-api
+      repository: ""
+      version: '>=1.0.0'
+    - name: deepspace-worker
+      repository: ""
+      version: '>=1.0.0'
+    description: A Helm chart for Kubernetes
+    digest: 76c81e4418956e74cc510287cbf196e061c01ad9166a0cdd2afb2aa408ea725b
+    icon: https://deep-space.app/favicon.ico
+    name: deepspace
+    type: application
+    urls:
+    - https://github.com/tgardner/deepspace-charts/releases/download/deepspace-0.1.3/deepspace-0.1.3.tgz
+    version: 0.1.3
+generated: "2024-05-22T04:34:37.728310958Z"
