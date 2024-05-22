@@ -26,9 +26,7 @@ appVersion: "1.16.0"
 icon: https://deep-space.app/favicon.ico
 
 dependencies:
-- name: deepspace-api
-  version: ">=0.1.0"
-  repository: file://charts/
-- name: deepspace-worker
-  version: ">=0.1.0"
-  repository: file://charts/
+- name: "deepspace-api"
+  version: ">=1.0.0"
+- name: "deepspace-worker"
+  version: ">=1.0.0"
