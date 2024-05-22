@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "deepspace-api.fullname" . }}
+  labels:
+    {{- include "deepspace-api.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "deepspace-api.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "deepspace-api.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "deepspace-api.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          env:
+            - name: ASPNETCORE_URLS
+              value: "http://+:{{ .Values.service.port }};http://+:8080"
+          {{- $env := merge (.Values.env | default dict) (.Values.global.env | default dict) -}}
+          {{ range $k, $v := $env }}
+            - name: {{ $k | quote }}
+              value: {{ $v | quote }}
+          {{- end }}
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - /bin/sh
+                  - '-c'
+                  - >-
+                    PID=$(ps | grep dotnet | grep -v grep | awk '{print $1}') &&
+                    kill -SIGTERM $PID
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

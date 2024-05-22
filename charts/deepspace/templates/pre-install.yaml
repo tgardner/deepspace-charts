@@ -1,0 +1,34 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: deepspace-db-migrate
+  labels:
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-1"
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  backoffLimit: 1
+  template:
+    metadata:
+      name: deepspace-db-migrate
+    spec:
+      {{- $pullSecrets := index .Values "deepspace-api" "imagePullSecrets" -}}
+      {{- with $pullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ index .Values "deepspace-api" "image" "repository" }}:{{ index .Values "deepspace-api" "image" "tag" | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ index .Values "deepspace-api" "image" "pullPolicy" }}
+        command: ["dotnet"]
+        args: ["DeepSpace.dll", "migrate"]
+        env:
+          {{- $apiEnv := index .Values "deepspace-api" "env" -}}
+          {{- $env := merge $apiEnv .Values.global.env -}}
+          {{ range $k, $v := $env }}
+            - name: {{ $k | quote }}
+              value: {{ $v | quote }}
+          {{- end }}
+      restartPolicy: Never
