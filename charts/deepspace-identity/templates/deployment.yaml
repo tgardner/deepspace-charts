@@ -45,11 +45,16 @@ spec:
             httpGet:
               path: /healthz
               port: http
+          {{- with .Values.env }}
           env:
-          {{- $env := merge (.Values.env | default dict) -}}
-          {{ range $k, $v := $env }}
+          {{- range $k, $v := . }}
             - name: {{ $k | quote }}
               value: {{ $v | quote }}
+          {{- end }}
+          {{- end }}
+          {{- with .Values.envFrom }}
+          envFrom:
+            {{- toYaml . | nindent 12 }}
           {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
