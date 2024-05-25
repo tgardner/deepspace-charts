@@ -22,6 +22,17 @@ entries:
   deepspace-identity:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2024-05-25T13:33:38.557904185Z"
+    description: A Helm chart for Kubernetes
+    digest: 6be96ede9c7de238ee0aece6bffc407d332143382c8aec11dcf7b1cd0280408e
+    icon: https://deep-space.app/favicon.ico
+    name: deepspace-identity
+    type: application
+    urls:
+    - https://github.com/tgardner/deepspace-charts/releases/download/deepspace-identity-0.1.7/deepspace-identity-0.1.7.tgz
+    version: 0.1.7
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2024-05-25T12:23:37.451839418Z"
     description: A Helm chart for Kubernetes
     digest: 5ffe407d156734cb50e7e15343366a4380e81f19ff0d730757ccf7d3d085731e
@@ -53,4 +64,4 @@ entries:
     urls:
     - https://github.com/tgardner/deepspace-charts/releases/download/deepspace-identity-0.1.4/deepspace-identity-0.1.4.tgz
     version: 0.1.4
-generated: "2024-05-25T12:23:37.451854025Z"
+generated: "2024-05-25T13:33:38.557926206Z"
