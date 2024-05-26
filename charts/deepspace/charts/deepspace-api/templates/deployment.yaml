@@ -35,25 +35,28 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: {{ .Values.service.port }}
+              containerPort: 8080
               protocol: TCP
           livenessProbe:
             httpGet:
               path: /healthz
-              port: 8080
+              port: http
           readinessProbe:
             httpGet:
               path: /healthz
-              port: 8080
+              port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          {{- with (merge (.Values.env | default dict) (.Values.global.env | default dict)) }}
           env:
-            - name: ASPNETCORE_URLS
-              value: "http://+:{{ .Values.service.port }};http://+:8080"
-          {{- $env := merge (.Values.env | default dict) (.Values.global.env | default dict) -}}
-          {{ range $k, $v := $env }}
+          {{- range $k, $v := . }}
             - name: {{ $k | quote }}
               value: {{ $v | quote }}
+          {{- end }}
+          {{- end }}
+          {{- with (concat (.Values.envFrom | default list) (.Values.global.envFrom | default list)) }}
+          envFrom:
+            {{- toYaml . | nindent 12 }}
           {{- end }}
           lifecycle:
             preStop:

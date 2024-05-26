@@ -24,11 +24,15 @@ spec:
         imagePullPolicy: {{ index .Values "deepspace-api" "image" "pullPolicy" }}
         command: ["dotnet"]
         args: ["DeepSpace.dll", "migrate"]
+        {{- with (merge ((index .Values "deepspace-api" "env") | default dict) (.Values.global.env | default dict)) }}
         env:
-          {{- $apiEnv := index .Values "deepspace-api" "env" -}}
-          {{- $env := merge $apiEnv .Values.global.env -}}
-          {{ range $k, $v := $env }}
-            - name: {{ $k | quote }}
-              value: {{ $v | quote }}
-          {{- end }}
+        {{- range $k, $v := . }}
+          - name: {{ $k | quote }}
+            value: {{ $v | quote }}
+        {{- end }}
+        {{- end }}
+        {{- with (concat ((index .Values "deepspace-api" "envFrom") | default list) (.Values.global.envFrom | default list)) }}
+        envFrom:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
       restartPolicy: Never
