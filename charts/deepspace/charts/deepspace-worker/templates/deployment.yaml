@@ -56,6 +56,18 @@ spec:
                   - >-
                     PID=$(ps | grep dotnet | grep -v grep | awk '{print $1}') &&
                     kill -SIGTERM $PID
+          ports:
+            - name: health
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /alive
+              port: health
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: health
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
