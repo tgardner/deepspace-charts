@@ -18,8 +18,8 @@ deepspace-api:
     annotations:
       nginx.ingress.kubernetes.io/rewrite-target: "/"
     hosts:
-    - host: chart-example.local
-      paths: []
+      - host: chart-example.local
+        paths: []
     tls: []
 
   autoscaling:
@@ -39,3 +39,6 @@ deepspace-worker:
     repository: ghcr.io/tgardner/ogame-worker
     pullPolicy: IfNotPresent
     tag: ""
+
+  volumes: []
+  volumeMounts: []

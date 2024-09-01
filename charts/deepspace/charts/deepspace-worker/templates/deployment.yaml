@@ -43,6 +43,10 @@ spec:
           {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          {{- with .Values.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           lifecycle:
             preStop:
               exec:
@@ -52,6 +56,10 @@ spec:
                   - >-
                     PID=$(ps | grep dotnet | grep -v grep | awk '{print $1}') &&
                     kill -SIGTERM $PID
+      {{- with .Values.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
