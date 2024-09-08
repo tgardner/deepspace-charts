@@ -1,44 +1,13 @@
 global:
   env: {}
-
-deepspace-api:
-  replicaCount: 1
-
   image:
-    repository: ghcr.io/tgardner/ogame-api
+    tag: ""
+  imagePullSecrets: []
+
+cli:
+  image:
+    repository: ghcr.io/tgardner/ogame-cli
     pullPolicy: IfNotPresent
     tag: ""
-
-  service:
-    type: ClusterIP
-    port: 80
-
-  ingress:
-    enabled: true
-    annotations:
-      nginx.ingress.kubernetes.io/rewrite-target: "/"
-    hosts:
-      - host: chart-example.local
-        paths: []
-    tls: []
-
-  autoscaling:
-    enabled: false
-    minReplicas: 1
-    maxReplicas: 100
-    targetCPUUtilizationPercentage: 80
-    behavior: {}
-
-  serviceAccount:
-    create: false
-
-deepspace-worker:
-  replicaCount: 1
-
-  image:
-    repository: ghcr.io/tgardner/ogame-worker
-    pullPolicy: IfNotPresent
-    tag: ""
-
-  volumes: []
-  volumeMounts: []
+  env: {}
+  envFrom: []

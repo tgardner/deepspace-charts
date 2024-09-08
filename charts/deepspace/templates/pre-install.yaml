@@ -13,25 +13,24 @@ spec:
     metadata:
       name: deepspace-db-migrate
     spec:
-      {{- $pullSecrets := index .Values "deepspace-api" "imagePullSecrets" -}}
-      {{- with $pullSecrets }}
+      {{- with (concat (.Values.cli.imagePullSecrets | default list) (.Values.global.imagePullSecrets | default list)) }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
       - name: {{ .Chart.Name }}
-        image: "{{ index .Values "deepspace-api" "image" "repository" }}:{{ index .Values "deepspace-api" "image" "tag" | default .Chart.AppVersion }}"
-        imagePullPolicy: {{ index .Values "deepspace-api" "image" "pullPolicy" }}
+        image: "{{ .Values.cli.image.repository }}:{{ .Values.cli.image.tag | default .Values.global.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.cli.image.pullPolicy }}
         command: ["dotnet"]
-        args: ["DeepSpace.dll", "migrate"]
-        {{- with (merge ((index .Values "deepspace-api" "env") | default dict) (.Values.global.env | default dict)) }}
+        args: ["DeepSpace.CommandLine.dll", "migrate"]
+        {{- with (merge (.Values.cli.env | default dict) (.Values.global.env | default dict)) }}
         env:
         {{- range $k, $v := . }}
           - name: {{ $k | quote }}
             value: {{ $v | quote }}
         {{- end }}
         {{- end }}
-        {{- with (concat ((index .Values "deepspace-api" "envFrom") | default list) (.Values.global.envFrom | default list)) }}
+        {{- with (concat (.Values.cli.envFrom | default list) (.Values.global.envFrom | default list)) }}
         envFrom:
           {{- toYaml . | nindent 10 }}
         {{- end }}
