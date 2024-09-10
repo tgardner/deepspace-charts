@@ -2,12 +2,13 @@ global:
   env: {}
   image:
     tag: ""
+    pullPolicy: IfNotPresent
   imagePullSecrets: []
 
 cli:
   image:
     repository: ghcr.io/tgardner/ogame-cli
-    pullPolicy: IfNotPresent
+    pullPolicy: ""
     tag: ""
   env: {}
   envFrom: []
