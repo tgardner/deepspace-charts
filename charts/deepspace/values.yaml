@@ -6,6 +6,7 @@ global:
   imagePullSecrets: []
 
 cli:
+  nameOverride: cli
   image:
     repository: ghcr.io/tgardner/ogame-cli
     pullPolicy: ""

@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: deepspace-db-migrate
+  name: {{ include "cli.fullname" . }}-db-migrate
   labels:
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade
@@ -11,7 +11,7 @@ spec:
   backoffLimit: 1
   template:
     metadata:
-      name: deepspace-db-migrate
+      name: {{ include "cli.fullname" . }}-db-migrate
     spec:
       {{- with (concat (.Values.cli.imagePullSecrets | default list) (.Values.global.imagePullSecrets | default list)) }}
       imagePullSecrets:
@@ -23,8 +23,10 @@ spec:
         imagePullPolicy: {{ .Values.cli.image.pullPolicy | default .Values.global.image.pullPolicy }}
         command: ["dotnet"]
         args: ["DeepSpace.CommandLine.dll", "migrate"]
-        {{- with (merge (.Values.cli.env | default dict) (.Values.global.env | default dict)) }}
         env:
+          - name: OTEL_SERVICE_NAME
+            value: {{ include "cli.fullname" . }}
+        {{- with (merge (.Values.cli.env | default dict) (.Values.global.env | default dict)) }}
         {{- range $k, $v := . }}
           - name: {{ $k | quote }}
             value: {{ $v | quote }}

@@ -47,6 +47,8 @@ spec:
           env:
             - name: services__api__http__0
               value: "http://{{ .Release.Name }}-api"
+            - name: OTEL_SERVICE_NAME
+              value: {{ include "web.fullname" . }}
           {{- with (merge (.Values.env | default dict) (.Values.global.env | default dict)) }}
           {{- range $k, $v := . }}
             - name: {{ $k | quote }}

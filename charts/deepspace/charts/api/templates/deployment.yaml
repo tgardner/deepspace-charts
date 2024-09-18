@@ -46,6 +46,8 @@ spec:
           env:
             - name: services__battleengine__http__0
               value: "http://{{ .Release.Name }}-battleengine"
+            - name: OTEL_SERVICE_NAME
+              value: {{ include "api.fullname" . }}
           {{- with (merge (.Values.env | default dict) (.Values.global.env | default dict)) }}
           {{- range $k, $v := . }}
             - name: {{ $k | quote }}

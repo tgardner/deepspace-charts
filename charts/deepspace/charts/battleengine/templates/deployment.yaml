@@ -44,8 +44,10 @@ spec:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:
             {{- toYaml .Values.readinessProbe | nindent 12 }}
-          {{- with (merge (.Values.env | default dict) (.Values.global.env | default dict)) }}
           env:
+            - name: OTEL_SERVICE_NAME
+              value: {{ include "battleengine.fullname" . }}
+          {{- with (merge (.Values.env | default dict) (.Values.global.env | default dict)) }}
           {{- range $k, $v := . }}
             - name: {{ $k | quote }}
               value: {{ $v | quote }}
