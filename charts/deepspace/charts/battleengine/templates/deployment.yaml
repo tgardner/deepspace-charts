@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "api.fullname" . }}
+  name: {{ include "battleengine.fullname" . }}
   labels:
-    {{- include "api.labels" . | nindent 4 }}
+    {{- include "battleengine.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "api.selectorLabels" . | nindent 6 }}
+      {{- include "battleengine.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -18,13 +18,16 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "api.selectorLabels" . | nindent 8 }}
+        {{- include "battleengine.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
     spec:
       {{- with (concat (.Values.imagePullSecrets | default list) (.Values.global.imagePullSecrets | default list)) }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "api.serviceAccountName" . }}
+      serviceAccountName: {{ include "battleengine.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -41,12 +44,8 @@ spec:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:
             {{- toYaml .Values.readinessProbe | nindent 12 }}
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
-          env:
-            - name: services__battleengine__http__0
-              value: "http://{{ .Release.Name }}-battleengine"
           {{- with (merge (.Values.env | default dict) (.Values.global.env | default dict)) }}
+          env:
           {{- range $k, $v := . }}
             - name: {{ $k | quote }}
               value: {{ $v | quote }}
@@ -54,6 +53,12 @@ spec:
           {{- end }}
           {{- with (concat (.Values.envFrom | default list) (.Values.global.envFrom | default list)) }}
           envFrom:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          {{- with .Values.volumeMounts }}
+          volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           lifecycle:
@@ -65,6 +70,10 @@ spec:
                   - >-
                     PID=$(ps | grep dotnet | grep -v grep | awk '{print $1}') &&
                     kill -SIGTERM $PID
+      {{- with .Values.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

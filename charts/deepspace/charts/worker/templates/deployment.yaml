@@ -38,8 +38,10 @@ spec:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:
             {{- toYaml .Values.readinessProbe | nindent 12 }}
-          {{- with (merge (.Values.env | default dict) (.Values.global.env | default dict)) }}
           env:
+            - name: services__battleengine__http__0
+              value: "http://{{ .Release.Name }}-battleengine"
+          {{- with (merge (.Values.env | default dict) (.Values.global.env | default dict)) }}
           {{- range $k, $v := . }}
             - name: {{ $k | quote }}
               value: {{ $v | quote }}
