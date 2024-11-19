@@ -34,7 +34,7 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Values.global.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy | default .Values.global.image.pullPolicy }}
           ports:
             - name: http
@@ -45,8 +45,8 @@ spec:
           readinessProbe:
             {{- toYaml .Values.readinessProbe | nindent 12 }}
           env:
-            - name: OTEL_SERVICE_NAME
-              value: {{ include "battleengine.fullname" . }}
+            - name: PORT
+              value: "8080"
           {{- with (merge (.Values.env | default dict) (.Values.global.env | default dict)) }}
           {{- range $k, $v := . }}
             - name: {{ $k | quote }}
@@ -63,15 +63,6 @@ spec:
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          lifecycle:
-            preStop:
-              exec:
-                command:
-                  - /bin/sh
-                  - '-c'
-                  - >-
-                    PID=$(ps | grep dotnet | grep -v grep | awk '{print $1}') &&
-                    kill -SIGTERM $PID
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}

@@ -5,10 +5,10 @@
 replicaCount: 1
 
 image:
-  repository: ghcr.io/tgardner/ogame-battleengine
+  repository: ghcr.io/tgardner/deepspace-battleengine
   pullPolicy: ""
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: "1"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -57,8 +57,8 @@ ingress:
       pathType: ImplementationSpecific
   tls: []
   #  - secretName: chart-example-tls
-#    hosts:
-#      - chart-example.local
+  #    hosts:
+  #      - chart-example.local
 
 resources: {}
 # We usually recommend not to specify default resources and to leave this as a conscious
@@ -74,7 +74,7 @@ resources: {}
 
 livenessProbe:
   httpGet:
-    path: /alive
+    path: /health
     port: http
 readinessProbe:
   httpGet:
@@ -88,7 +88,7 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
-# Additional volumes on the output Deployment definition.
+  # Additional volumes on the output Deployment definition.
 volumes: []
 # - name: foo
 #   secret:
