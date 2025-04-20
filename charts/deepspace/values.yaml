@@ -13,3 +13,6 @@ cli:
     tag: ""
   env: {}
   envFrom: []
+  args:
+  - DeepSpace.CommandLine.dll
+  - migrate

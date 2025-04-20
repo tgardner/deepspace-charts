@@ -22,7 +22,10 @@ spec:
         image: "{{ .Values.cli.image.repository }}:{{ .Values.cli.image.tag | default .Values.global.image.tag | default .Chart.AppVersion }}"
         imagePullPolicy: {{ .Values.cli.image.pullPolicy | default .Values.global.image.pullPolicy }}
         command: ["dotnet"]
-        args: ["DeepSpace.CommandLine.dll", "migrate"]
+        args:
+        {{- with (.Values.cli.args | default list) }}
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
         env:
           - name: OTEL_SERVICE_NAME
             value: {{ include "cli.fullname" . }}
